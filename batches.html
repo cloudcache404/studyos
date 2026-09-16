@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Access Batches</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg1: #0a0e1a;
+    --bg2: #131a2e;
+    --accent: #6366f1;
+    --accent2: #22d3ee;
+    --text: #f1f5f9;
+    --muted: #8b96ad;
+  }
+
+  html, body { height: 100%; }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 20% 20%, #1e2547 0%, transparent 45%),
+                radial-gradient(circle at 80% 80%, #0e2a3a 0%, transparent 45%),
+                linear-gradient(160deg, var(--bg1), var(--bg2));
+    font-family: 'Segoe UI', 'Inter', Arial, sans-serif;
+    padding: 24px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.35;
+    z-index: 0;
+    animation: float 12s ease-in-out infinite;
+  }
+  .blob1 { width: 320px; height: 320px; background: var(--accent); top: -80px; left: -80px; }
+  .blob2 { width: 280px; height: 280px; background: var(--accent2); bottom: -100px; right: -60px; animation-delay: -6s; }
+  @keyframes float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(30px, -20px) scale(1.08); }
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 440px;
+    text-align: center;
+    animation: rise 0.7s ease;
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .logo-badge {
+    width: 56px; height: 56px;
+    margin: 0 auto 20px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    box-shadow: 0 10px 30px -8px rgba(99, 102, 241, 0.6);
+  }
+
+  h1 {
+    color: var(--text);
+    font-size: 1.9rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  p.sub { color: var(--muted); margin-bottom: 36px; font-size: 0.95rem; }
+
+  .options { display: flex; flex-direction: column; gap: 16px; }
+
+  .card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-decoration: none;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 18px;
+    padding: 18px 20px;
+    overflow: hidden;
+    transition: transform 0.25s cubic-bezier(.2,.8,.2,1), border-color 0.25s, background 0.25s;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.06), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+  }
+  .card:hover::before { transform: translateX(100%); }
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(99, 102, 241, 0.5);
+    background: rgba(255, 255, 255, 0.08);
+  }
+  .card:active { transform: translateY(-1px) scale(0.99); }
+
+  .icon {
+    flex-shrink: 0;
+    width: 46px; height: 46px;
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+  .icon-1 { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
+  .icon-2 { background: linear-gradient(135deg, #22d3ee, #0ea5e9); }
+
+  .info { flex: 1; min-width: 0; }
+  .name { color: var(--text); font-size: 1.05rem; font-weight: 600; margin-bottom: 3px; }
+  .url { color: var(--muted); font-size: 0.8rem; word-break: break-all; }
+
+  .arrow { color: var(--muted); font-size: 1.1rem; transition: transform 0.25s, color 0.25s; }
+  .card:hover .arrow { transform: translateX(4px); color: var(--accent2); }
+
+  footer { margin-top: 32px; color: #56607a; font-size: 0.75rem; letter-spacing: 0.02em; }
+</style>
+</head>
+<body>
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+
+  <div class="wrap">
+    <div class="logo-badge">🎓</div>
+    <h1>Access Batches</h1>
+    <p class="sub">Choose a platform to continue</p>
+
+    <div class="options">
+      <a class="card" href="https://studyfox.mscilearn.in" target="_blank" rel="noopener">
+        <div class="icon icon-1">🦊</div>
+        <div class="info">
+          <div class="name">Study Fox</div>
+          <div class="url">studyfox.mscilearn.in</div>
+        </div>
+        <div class="arrow">→</div>
+      </a>
+
+      <a class="card" href="https://mscilearn.in" target="_blank" rel="noopener">
+        <div class="icon icon-2">📚</div>
+        <div class="info">
+          <div class="name">mscilearn</div>
+          <div class="url">mscilearn.in</div>
+        </div>
+        <div class="arrow">→</div>
+      </a>
+    </div>
+
+    <footer>Tap a card to open in a new tab</footer>
+  </div>
+</body>
+</html>
