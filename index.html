@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>StudyOS — Your personal student command center</title>
+<meta name="description" content="StudyOS: an all-in-one dashboard for students. Tasks, exams, focus timer, flashcards and progress, all in one place." />
+<meta name="theme-color" content="#0B0E17" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="icon" href="assets/icons/icon-192.svg" />
+<link rel="apple-touch-icon" href="assets/icons/icon-192.svg" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="bg-field" aria-hidden="true">
+  <div class="bg-glow bg-glow--a"></div>
+  <div class="bg-glow bg-glow--b"></div>
+</div>
+
+<!-- ===================== DESKTOP SIDEBAR ===================== -->
+<nav class="sidenav" aria-label="Primary">
+  <div class="sidenav__brand">
+    <span class="sidenav__mark">SO</span>
+    <span class="sidenav__name">StudyOS</span>
+  </div>
+  <ul class="sidenav__list" id="sidenavList">
+    <li><button class="sidenav__item is-active" data-route="dashboard"><svg class="icon"><use href="#i-home"/></svg><span>Dashboard</span></button></li>
+    <li><button class="sidenav__item" data-route="tasks"><svg class="icon"><use href="#i-check"/></svg><span>Tasks</span></button></li>
+    <li><button class="sidenav__item" data-route="focus"><svg class="icon"><use href="#i-timer"/></svg><span>Focus</span></button></li>
+    <li><button class="sidenav__item" data-route="exams"><svg class="icon"><use href="#i-cal"/></svg><span>Exams</span></button></li>
+    <li><button class="sidenav__item" data-route="flashcards"><svg class="icon"><use href="#i-cards"/></svg><span>Flashcards</span></button></li>
+    <li><button class="sidenav__item" data-route="batches"><svg class="icon"><use href="#i-batch"/></svg><span>Batches</span></button></li>
+    <li><button class="sidenav__item" data-route="notes"><svg class="icon"><use href="#i-notes"/></svg><span>Notes</span></button></li>
+    <li><button class="sidenav__item" data-route="progress"><svg class="icon"><use href="#i-chart"/></svg><span>Progress</span></button></li>
+    <li><button class="sidenav__item" data-route="calculator"><svg class="icon"><use href="#i-calc"/></svg><span>Calculator</span></button></li>
+    <li><button class="sidenav__item" data-route="links"><svg class="icon"><use href="#i-link"/></svg><span>Links</span></button></li>
+    <li><button class="sidenav__item" data-route="settings"><svg class="icon"><use href="#i-settings"/></svg><span>Settings</span></button></li>
+  </ul>
+  <div class="sidenav__foot">
+    <div class="streak-pill" id="sideStreak">🔥 0 day streak</div>
+  </div>
+</nav>
+
+<!-- ===================== MAIN ===================== -->
+<main class="app" id="app">
+
+  <header class="topbar">
+    <button class="topbar__title" id="topbarTitle">Dashboard</button>
+    <div class="topbar__actions">
+      <button class="icon-btn" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">
+        <svg class="icon"><use href="#i-moon"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="view-scroll" id="viewScroll">
+
+    <!-- ---------- DASHBOARD ---------- -->
+    <section class="view" id="view-dashboard" data-view="dashboard">
+      <div class="hero-greet">
+        <p class="hero-greet__date" id="todayDate">—</p>
+        <h1 class="hero-greet__title" id="greeting">Welcome back</h1>
+        <p class="hero-greet__quote" id="motivation">Small steps, every day, win the year.</p>
+      </div>
+
+      <div class="grid grid--dash">
+        <article class="card card--stat">
+          <div class="card__label">Study streak</div>
+          <div class="card__big" id="statStreak">0</div>
+          <div class="card__sub">days in a row</div>
+        </article>
+
+        <article class="card card--stat">
+          <div class="card__label">Focus time today</div>
+          <div class="card__big" id="statFocusToday">0m</div>
+          <div class="card__sub" id="statFocusSessions">0 sessions</div>
+        </article>
+
+        <article class="card card--stat">
+          <div class="card__label">Tasks today</div>
+          <div class="card__big" id="statTasksToday">0/0</div>
+          <div class="card__sub">completed</div>
+        </article>
+
+        <article class="card card--exam" id="nextExamCard">
+          <div class="card__label">Next exam</div>
+          <div class="card__examname" id="nextExamName">No exams yet</div>
+          <div class="card__countdown" id="nextExamCountdown">Add one to start the countdown</div>
+        </article>
+
+        <article class="card card--tasks">
+          <div class="card__head">
+            <h2>Today's tasks</h2>
+            <button class="link-btn" data-route="tasks">See all</button>
+          </div>
+          <ul class="tasklist" id="dashTaskList"></ul>
+          <p class="empty-note" id="dashTaskEmpty">Nothing due today. Add a task to get moving.</p>
+        </article>
+
+        <article class="card card--progress">
+          <div class="card__head">
+            <h2>This week</h2>
+          </div>
+          <div class="weekbar" id="weekBar"></div>
+        </article>
+
+        <article class="card card--quick">
+          <div class="card__head"><h2>Quick actions</h2></div>
+          <div class="quick-actions">
+            <button class="quick-btn" data-quick="focus"><svg class="icon"><use href="#i-timer"/></svg>Start focus</button>
+            <button class="quick-btn" data-quick="task"><svg class="icon"><use href="#i-plus"/></svg>Add task</button>
+            <button class="quick-btn" data-quick="batches"><svg class="icon"><use href="#i-batch"/></svg>Batches</button>
+            <button class="quick-btn" data-quick="notes"><svg class="icon"><use href="#i-notes"/></svg>Open notes</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ---------- TASKS ---------- -->
+    <section class="view" id="view-tasks" data-view="tasks" hidden>
+      <div class="view-head">
+        <h1>Tasks</h1>
+        <button class="btn btn--primary" id="openTaskForm"><svg class="icon"><use href="#i-plus"/></svg>Add task</button>
+      </div>
+
+      <div class="filter-row" role="tablist" aria-label="Filter tasks">
+        <button class="chip is-active" data-filter="all" role="tab" aria-selected="true">All</button>
+        <button class="chip" data-filter="pending" role="tab" aria-selected="false">Pending</button>
+        <button class="chip" data-filter="completed" role="tab" aria-selected="false">Completed</button>
+      </div>
+
+      <form class="panel-form" id="taskForm" hidden>
+        <div class="field-row">
+          <label class="field"><span>Task</span><input type="text" id="taskTitle" required maxlength="120" placeholder="e.g. Finish Physics worksheet" /></label>
+        </div>
+        <div class="field-row field-row--3">
+          <label class="field"><span>Subject</span><input type="text" id="taskSubject" maxlength="40" placeholder="Physics" /></label>
+          <label class="field"><span>Due date</span><input type="date" id="taskDue" /></label>
+          <label class="field"><span>Priority</span>
+            <select id="taskPriority">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+            </select>
+          </label>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn--ghost" id="cancelTaskForm">Cancel</button>
+          <button type="submit" class="btn btn--primary">Save task</button>
+        </div>
+      </form>
+
+      <ul class="tasklist tasklist--full" id="fullTaskList"></ul>
+      <div class="empty-state" id="taskEmptyState" hidden>
+        <svg class="icon icon--xl"><use href="#i-check"/></svg>
+        <p>No tasks here yet.</p>
+        <button class="btn btn--primary" data-quick="task">Add your first task</button>
+      </div>
+    </section>
+
+    <!-- ---------- FOCUS ---------- -->
+    <section class="view" id="view-focus" data-view="focus" hidden>
+      <div class="view-head"><h1>Focus</h1></div>
+
+      <div class="focus-wrap">
+        <div class="focus-modes" role="tablist" aria-label="Focus mode">
+          <button class="chip is-active" data-mode="focus" role="tab" aria-selected="true">Focus</button>
+          <button class="chip" data-mode="short" role="tab" aria-selected="false">Short break</button>
+          <button class="chip" data-mode="long" role="tab" aria-selected="false">Long break</button>
+        </div>
+
+        <div class="timer-ring-wrap">
+          <svg class="timer-ring" viewBox="0 0 220 220" aria-hidden="true">
+            <circle class="timer-ring__track" cx="110" cy="110" r="98" />
+            <circle class="timer-ring__progress" id="timerRingProgress" cx="110" cy="110" r="98" />
+          </svg>
+          <div class="timer-center">
+            <div class="timer-time" id="timerDisplay">25:00</div>
+            <div class="timer-session" id="timerSessionLabel">Session 1</div>
+          </div>
+        </div>
+
+        <div class="timer-controls">
+          <button class="icon-btn icon-btn--lg" id="timerReset" aria-label="Reset"><svg class="icon"><use href="#i-reset"/></svg></button>
+          <button class="btn btn--primary btn--round" id="timerStartPause">Start</button>
+          <button class="icon-btn icon-btn--lg" id="timerSkip" aria-label="Skip"><svg class="icon"><use href="#i-skip"/></svg></button>
+        </div>
+
+        <div class="focus-stats">
+          <div><span id="focusSessionsToday">0</span><small>Sessions today</small></div>
+          <div><span id="focusMinutesToday">0</span><small>Minutes today</small></div>
+        </div>
+
+        <details class="focus-settings">
+          <summary>Customize durations</summary>
+          <div class="field-row field-row--3">
+            <label class="field"><span>Focus (min)</span><input type="number" id="durFocus" min="1" max="180" value="25" /></label>
+            <label class="field"><span>Short break (min)</span><input type="number" id="durShort" min="1" max="60" value="5" /></label>
+            <label class="field"><span>Long break (min)</span><input type="number" id="durLong" min="1" max="90" value="15" /></label>
+          </div>
+          <label class="field field--inline"><input type="checkbox" id="durSound" checked /><span>Play sound when a session ends</span></label>
+        </details>
+      </div>
+    </section>
+
+    <!-- ---------- EXAMS ---------- -->
+    <section class="view" id="view-exams" data-view="exams" hidden>
+      <div class="view-head">
+        <h1>Exams</h1>
+        <button class="btn btn--primary" id="openExamForm"><svg class="icon"><use href="#i-plus"/></svg>Add exam</button>
+      </div>
+
+      <form class="panel-form" id="examForm" hidden>
+        <div class="field-row field-row--3">
+          <label class="field"><span>Exam name</span><input type="text" id="examName" required maxlength="80" placeholder="Unit Test 2" /></label>
+          <label class="field"><span>Subject</span><input type="text" id="examSubject" maxlength="40" placeholder="Mathematics" /></label>
+          <label class="field"><span>Date</span><input type="datetime-local" id="examDate" required /></label>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn--ghost" id="cancelExamForm">Cancel</button>
+          <button type="submit" class="btn btn--primary">Save exam</button>
+        </div>
+      </form>
+
+      <div class="grid grid--exams" id="examGrid"></div>
+      <div class="empty-state" id="examEmptyState" hidden>
+        <svg class="icon icon--xl"><use href="#i-cal"/></svg>
+        <p>No exams scheduled.</p>
+        <button class="btn btn--primary" data-quick="exam">Add your first exam</button>
+      </div>
+    </section>
+
+    <!-- ---------- FLASHCARDS ---------- -->
+    <section class="view" id="view-flashcards" data-view="flashcards" hidden>
+      <div class="view-head">
+        <h1>Flashcards</h1>
+        <button class="btn btn--primary" id="openCardForm"><svg class="icon"><use href="#i-plus"/></svg>Add card</button>
+      </div>
+
+      <form class="panel-form" id="cardForm" hidden>
+        <div class="field-row field-row--3">
+          <label class="field"><span>Category</span><input type="text" id="cardCategory" maxlength="40" placeholder="Biology" /></label>
+        </div>
+        <div class="field-row">
+          <label class="field"><span>Front</span><textarea id="cardFront" required maxlength="300" rows="2" placeholder="What is osmosis?"></textarea></label>
+        </div>
+        <div class="field-row">
+          <label class="field"><span>Back</span><textarea id="cardBack" required maxlength="300" rows="2" placeholder="Movement of water across a membrane..."></textarea></label>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn--ghost" id="cancelCardForm">Cancel</button>
+          <button type="submit" class="btn btn--primary">Save card</button>
+        </div>
+      </form>
+
+      <div class="deck-select-row" id="deckSelectRow"></div>
+
+      <div class="deck-wrap" id="deckWrap">
+        <button class="deck-nav" id="cardPrev" aria-label="Previous card"><svg class="icon"><use href="#i-chevleft"/></svg></button>
+
+        <div class="flashcard" id="flashcard" tabindex="0" role="button" aria-label="Flip card">
+          <div class="flashcard__inner" id="flashcardInner">
+            <div class="flashcard__face flashcard__face--front">
+              <span class="flashcard__tag" id="cardTagFront"></span>
+              <p id="cardFrontText">Add a flashcard to start revising</p>
+            </div>
+            <div class="flashcard__face flashcard__face--back">
+              <span class="flashcard__tag" id="cardTagBack"></span>
+              <p id="cardBackText"></p>
+            </div>
+          </div>
+        </div>
+
+        <button class="deck-nav" id="cardNext" aria-label="Next card"><svg class="icon"><use href="#i-chevright"/></svg></button>
+      </div>
+      <div class="deck-footer">
+        <span id="cardPosition">0 / 0</span>
+        <button class="btn btn--danger-ghost" id="deleteCard" hidden>Delete this card</button>
+      </div>
+    </section>
+
+    <!-- ---------- BATCHES ---------- -->
+    <section class="view" id="view-batches" data-view="batches" hidden>
+      <div class="view-head"><h1>Batches</h1></div>
+      <article class="card card--notes">
+        <svg class="icon icon--xl"><use href="#i-batch"/></svg>
+        <h2>Access Batches</h2>
+        <p>Access your enrolled batches, live lectures, schedule, and course materials across platforms.</p>
+        <a class="btn btn--primary" id="nwBatchesLink" href="batches.html" target="_blank" rel="noopener noreferrer">Open Batches</a>
+        <p class="tiny-note">Opens in a new tab. Choose between Study Fox and mscilearn.</p>
+      </article>
+    </section>
+
+    <!-- ---------- NOTES ---------- -->
+    <section class="view" id="view-notes" data-view="notes" hidden>
+      <div class="view-head"><h1>Notes</h1></div>
+      <article class="card card--notes">
+        <svg class="icon icon--xl"><use href="#i-notes"/></svg>
+        <h2>NW Notes</h2>
+        <p>Access your study notes and resources.</p>
+        <a class="btn btn--primary" id="nwNotesLink" href="https://nw.voxelgrid.in" target="_blank" rel="noopener noreferrer">Open NW Notes</a>
+        <p class="tiny-note">Opens in a new tab. StudyOS does not store notes itself — NW Notes is the source of truth.</p>
+      </article>
+    </section>
+
+    <!-- ---------- PROGRESS ---------- -->
+    <section class="view" id="view-progress" data-view="progress" hidden>
+      <div class="view-head"><h1>Progress</h1></div>
+      <div class="grid grid--dash">
+        <article class="card card--stat"><div class="card__label">Focus sessions</div><div class="card__big" id="pSessions">0</div><div class="card__sub">all time</div></article>
+        <article class="card card--stat"><div class="card__label">Total focus time</div><div class="card__big" id="pFocusTime">0h 0m</div><div class="card__sub">all time</div></article>
+        <article class="card card--stat"><div class="card__label">Tasks completed</div><div class="card__big" id="pTasks">0</div><div class="card__sub">all time</div></article>
+        <article class="card card--stat"><div class="card__label">Current streak</div><div class="card__big" id="pStreak">0</div><div class="card__sub">days</div></article>
+        <article class="card card--stat"><div class="card__label">Best streak</div><div class="card__big" id="pBestStreak">0</div><div class="card__sub">days</div></article>
+        <article class="card card--stat"><div class="card__label">Exams tracked</div><div class="card__big" id="pExams">0</div><div class="card__sub">all time</div></article>
+      </div>
+      <article class="card card--progress" style="margin-top:16px">
+        <div class="card__head"><h2>Weekly activity</h2></div>
+        <div class="weekbar" id="weekBarFull"></div>
+      </article>
+    </section>
+
+    <!-- ---------- CALCULATOR ---------- -->
+    <section class="view" id="view-calculator" data-view="calculator" hidden>
+      <div class="view-head"><h1>Calculator</h1></div>
+      <div class="calc">
+        <div class="calc__screen">
+          <div class="calc__expr" id="calcExpr">&nbsp;</div>
+          <div class="calc__result" id="calcResult">0</div>
+        </div>
+        <div class="calc__grid" id="calcGrid">
+          <button class="calc__key calc__key--fn" data-k="clear">AC</button>
+          <button class="calc__key calc__key--fn" data-k="back">⌫</button>
+          <button class="calc__key calc__key--fn" data-k="(">(</button>
+          <button class="calc__key calc__key--fn" data-k=")">)</button>
+
+          <button class="calc__key calc__key--fn" data-k="sqrt">√</button>
+          <button class="calc__key calc__key--fn" data-k="^">xʸ</button>
+          <button class="calc__key calc__key--fn" data-k="%">%</button>
+          <button class="calc__key calc__key--op" data-k="/">÷</button>
+
+          <button class="calc__key" data-k="7">7</button>
+          <button class="calc__key" data-k="8">8</button>
+          <button class="calc__key" data-k="9">9</button>
+          <button class="calc__key calc__key--op" data-k="*">×</button>
+
+          <button class="calc__key" data-k="4">4</button>
+          <button class="calc__key" data-k="5">5</button>
+          <button class="calc__key" data-k="6">6</button>
+          <button class="calc__key calc__key--op" data-k="-">−</button>
+
+          <button class="calc__key" data-k="1">1</button>
+          <button class="calc__key" data-k="2">2</button>
+          <button class="calc__key" data-k="3">3</button>
+          <button class="calc__key calc__key--op" data-k="+">+</button>
+
+          <button class="calc__key calc__key--wide" data-k="0">0</button>
+          <button class="calc__key" data-k=".">.</button>
+          <button class="calc__key calc__key--eq" data-k="=">=</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- LINKS ---------- -->
+    <section class="view" id="view-links" data-view="links" hidden>
+      <div class="view-head"><h1>Useful links</h1></div>
+      <div class="grid grid--links">
+        <a class="card card--link" href="batches.html" target="_blank" rel="noopener noreferrer">
+          <svg class="icon icon--lg"><use href="#i-batch"/></svg>
+          <h3>Batches</h3><p>Your enrolled batches and class schedule</p>
+        </a>
+        <a class="card card--link" href="https://nw.voxelgrid.in" target="_blank" rel="noopener noreferrer">
+          <svg class="icon icon--lg"><use href="#i-notes"/></svg>
+          <h3>NW Notes</h3><p>Your class notes and resources</p>
+        </a>
+        <a class="card card--link" href="https://ncert.nic.in" target="_blank" rel="noopener noreferrer">
+          <svg class="icon icon--lg"><use href="#i-link"/></svg>
+          <h3>NCERT</h3><p>Official textbooks and syllabus</p>
+        </a>
+        <a class="card card--link" href="https://www.cbse.gov.in" target="_blank" rel="noopener noreferrer">
+          <svg class="icon icon--lg"><use href="#i-link"/></svg>
+          <h3>CBSE</h3><p>Board circulars and updates</p>
+        </a>
+        <a class="card card--link" href="https://diksha.gov.in" target="_blank" rel="noopener noreferrer">
+          <svg class="icon icon--lg"><use href="#i-link"/></svg>
+          <h3>DIKSHA</h3><p>Government learning platform</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- ---------- SETTINGS ---------- -->
+    <section class="view" id="view-settings" data-view="settings" hidden>
+      <div class="view-head"><h1>Settings</h1></div>
+
+      <article class="card">
+        <div class="card__head"><h2>Appearance</h2></div>
+        <label class="field field--inline"><input type="checkbox" id="settingsThemeSwitch" /><span>Light mode</span></label>
+      </article>
+
+      <article class="card">
+        <div class="card__head"><h2>Notifications</h2></div>
+        <p class="tiny-note" id="notifStatus">Not enabled yet.</p>
+        <button class="btn btn--ghost" id="enableNotifs">Enable notifications</button>
+      </article>
+
+      <article class="card">
+        <div class="card__head"><h2>Data</h2></div>
+        <p class="tiny-note">Everything is stored only in this browser, on this device.</p>
+        <button class="btn btn--danger-ghost" id="resetData">Reset all StudyOS data</button>
+      </article>
+
+      <article class="card card--privacy">
+        <div class="card__head"><h2>Privacy</h2></div>
+        <ul class="privacy-list">
+          <li>StudyOS does not require an account.</li>
+          <li>Tasks, exams, flashcards and preferences you create are stored locally in your browser.</li>
+          <li>No personal information is intentionally collected by the application.</li>
+          <li>External links such as NW Notes and NW Batches may have their own privacy policies.</li>
+        </ul>
+      </article>
+    </section>
+
+  </div>
+
+  <!-- ===================== MOBILE BOTTOM NAV ===================== -->
+  <nav class="bottomnav" aria-label="Primary">
+    <button class="bottomnav__item is-active" data-route="dashboard"><svg class="icon"><use href="#i-home"/></svg><span>Home</span></button>
+    <button class="bottomnav__item" data-route="tasks"><svg class="icon"><use href="#i-check"/></svg><span>Tasks</span></button>
+    <button class="bottomnav__item" data-route="focus"><svg class="icon"><use href="#i-timer"/></svg><span>Focus</span></button>
+    <button class="bottomnav__item" data-route="flashcards"><svg class="icon"><use href="#i-cards"/></svg><span>Cards</span></button>
+    <button class="bottomnav__item" data-route="more"><svg class="icon"><use href="#i-more"/></svg><span>More</span></button>
+  </nav>
+
+  <!-- MORE sheet for mobile -->
+  <div class="sheet-backdrop" id="moreSheetBackdrop" hidden></div>
+  <div class="sheet" id="moreSheet" hidden>
+    <div class="sheet__handle"></div>
+    <button class="sheet__item" data-route="exams"><svg class="icon"><use href="#i-cal"/></svg>Exams</button>
+    <button class="sheet__item" data-route="batches"><svg class="icon"><use href="#i-batch"/></svg>Batches</button>
+    <button class="sheet__item" data-route="notes"><svg class="icon"><use href="#i-notes"/></svg>Notes</button>
+    <button class="sheet__item" data-route="progress"><svg class="icon"><use href="#i-chart"/></svg>Progress</button>
+    <button class="sheet__item" data-route="calculator"><svg class="icon"><use href="#i-calc"/></svg>Calculator</button>
+    <button class="sheet__item" data-route="links"><svg class="icon"><use href="#i-link"/></svg>Links</button>
+    <button class="sheet__item" data-route="settings"><svg class="icon"><use href="#i-settings"/></svg>Settings</button>
+  </div>
+
+</main>
+
+<!-- Toast -->
+<div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+<!-- Confirm dialog -->
+<div class="confirm-backdrop" id="confirmBackdrop" hidden>
+  <div class="confirm-box" role="alertdialog" aria-modal="true">
+    <p id="confirmMessage">Are you sure?</p>
+    <div class="form-actions">
+      <button class="btn btn--ghost" id="confirmCancel">Cancel</button>
+      <button class="btn btn--danger" id="confirmOk">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- SVG sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-home" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 11.5 12 4l9 7.5"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m4 12 5 5L20 6"/></symbol>
+    <symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 9v4l3 2M9 2h6"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M3 9h18M8 3v4M16 3v4"/></symbol>
+    <symbol id="i-cards" viewBox="0 0 24 24"><rect x="4" y="6" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" d="M7 6V4h13v10h-2"/></symbol>
+    <symbol id="i-batch" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-notes" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path fill="none" stroke="currentColor" stroke-width="2" d="M14 3v5h5M8 12h8M8 16h8M8 8h3"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M4 20V10M12 20V4M20 20v-7"/></symbol>
+    <symbol id="i-calc" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" d="M8 7h8M8 12h1M12 12h1M16 12h1M8 16h1M12 16h1M16 16h1"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M10 14a4 4 0 0 0 6 0l3-3a4 4 0 0 0-6-6l-1.5 1.5"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M14 10a4 4 0 0 0-6 0l-3 3a4 4 0 0 0 6 6l1.5-1.5"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="19" cy="12" r="1.6" fill="currentColor"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 12a9 9 0 1 1 3 6.7M3 12V6M3 12h6"/></symbol>
+    <symbol id="i-skip" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 5v14l11-7Z"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M19 5v14"/></symbol>
+    <symbol id="i-chevleft" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 6l-6 6 6 6"/></symbol>
+    <symbol id="i-chevright" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-8 0 1 13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1l1-13"/></symbol>
+  </defs>
+</svg>
+
+<script src="app.js"></script>
+</body>
+</html>
